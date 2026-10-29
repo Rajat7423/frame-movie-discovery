@@ -1,6 +1,6 @@
 # FRAME — movie discovery
 
-FRAME is a responsive, no-build-step movie discovery site with a starter catalog of 24 real films. Explore by genre, mood, era, and minimum rating; sort the collection, get a surprise pick, save a watchlist, and open film profiles with cast, crew, trailer links, and similar recommendations. Your saved films shape the “For you” collection. A TMDB read access token can be connected in the app for live listings, current ratings, posters, credits, trailers, and recommendations.
+FRAME is a responsive, no-build-step movie discovery site with a starter catalog of 48 real films, curated across decades, genres, and international cinema. Explore by genre, mood, era, and minimum rating; sort the collection, get a surprise pick, save a watchlist, and open film profiles with cast, crew, trailer links, and similar recommendations. Your saved films shape the “For you” collection. A TMDB read access token can be connected in the app for live listings, current ratings, posters, credits, trailers, and recommendations. Developed by Vaibhav Yadav.
 
 ## Live site
 
