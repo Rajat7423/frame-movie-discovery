@@ -1,6 +1,6 @@
 # FRAME — movie discovery
 
-FRAME is a responsive, no-build-step movie discovery site with a starter catalog of 48 real films, curated across decades, genres, and international cinema. Explore by genre, mood, era, and minimum rating; sort the collection, get a surprise pick, save a watchlist, and open film profiles with cast, crew, trailer links, and similar recommendations. Your saved films shape the “For you” collection. A TMDB read access token can be connected in the app for live listings, current ratings, posters, credits, trailers, and recommendations. Developed by Vaibhav Yadav.
+FRAME is a responsive, no-build-step movie discovery site with 73 real films, including 25 films from Hindi, Telugu, Kannada, Malayalam, Tamil, Bengali, and Marathi cinema. The **Indian cinema** collection filters the catalog to Indian films. Explore by genre, mood, era, and minimum rating; sort the collection, get a surprise pick, save a watchlist, and open film profiles with cast, crew, trailer links, and similar recommendations. Your saved films shape the “For you” collection. Every bundled film has an original FRAME poster illustration and matching wallpaper-style detail backdrop. A TMDB read access token can be connected in the app for live listings, current ratings, official artwork where available, credits, trailers, and recommendations. Developed by Vaibhav Yadav.
 
 ## Live site
 
@@ -22,7 +22,7 @@ Then visit <http://localhost:8000>.
 2. Open FRAME’s settings button, paste the token, and choose **Save & connect**.
 3. The token is kept in this browser’s local storage. Choose **Use demo collection** to remove it.
 
-TMDB credentials are not present in this project, so the hackathon demo works immediately with the bundled real-film catalog. The token is sent as a bearer token to TMDB’s v3 API. Browser-side tokens can be inspected by visitors; use a small server-side proxy and keep the token out of the client for a public deployment. TMDB data may be subject to its terms and attribution requirements.
+TMDB credentials are not present in this project, so the hackathon demo works immediately with the bundled real-film catalog and its original illustrated artwork. The token is sent as a bearer token to TMDB’s v3 API. Browser-side tokens can be inspected by visitors; use a small server-side proxy and keep the token out of the client for a public deployment. TMDB data may be subject to its terms and attribution requirements.
 
 This product uses the TMDB API but is not endorsed or certified by TMDB.
 
