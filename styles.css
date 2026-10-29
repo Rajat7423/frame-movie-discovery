@@ -24,6 +24,10 @@ a { color: inherit; }
 .site-shell { width: min(100% - 112px, 1336px); margin: 0 auto; }
 .site-header { height: 90px; display: flex; align-items: center; border-bottom: 1px solid var(--line); }
 .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 16px; letter-spacing: .18em; }
+.developer-credit { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; padding: 8px 12px; border: 1px solid #efb6a2; border-radius: 999px; background: linear-gradient(110deg, #fffaf6, #fbe8df); color: #9a5038; box-shadow: 0 4px 16px #e65b3615; white-space: nowrap; }
+.developer-mark { color: var(--orange); font-size: 13px; line-height: 1; }
+.developer-label { font: 7px var(--mono); letter-spacing: .11em; }
+.developer-credit strong { color: var(--ink); font-size: 10px; font-weight: 700; letter-spacing: .01em; }
 .brand-period, .title-period { color: var(--orange); }
 .brand-mark { width: 25px; height: 25px; display: flex; align-items: center; gap: 2px; padding: 4px; background: var(--ink); border-radius: 3px; }
 .brand-mark i { width: 4px; border: 1px solid #f5f3ef; border-radius: 1px; display: block; height: 16px; }
@@ -235,12 +239,15 @@ h1 em, .settings-dialog h2 em { font-weight: 500; color: var(--orange); }
 }
 @media (max-width: 620px) {
   .site-shell { width: min(100% - 36px, 1336px); }
-  .site-header { height: 68px; }
+  .site-header { height: 96px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: 54px 41px; column-gap: 8px; }
   .brand { font-size: 13px; gap: 7px; }
   .brand-mark { width: 22px; height: 22px; }
-  .main-nav { gap: 19px; }
+  .developer-credit { grid-column: 2; grid-row: 1; justify-self: center; gap: 5px; padding: 6px 8px; }
+  .developer-label { font-size: 6px; }
+  .developer-credit strong { font-size: 9px; }
+  .main-nav { grid-column: 1 / 4; grid-row: 2; justify-self: center; height: 100%; margin: 0; gap: 28px; }
   .nav-link { font-size: 11px; }
-  .settings-button { width: 32px; height: 32px; }
+  .settings-button { grid-column: 3; grid-row: 1; width: 32px; height: 32px; }
   .intro-section { padding: 50px 0 29px; display: block; }
   .eyebrow { font-size: 8px; margin-bottom: 15px; }
   h1 { font-size: clamp(54px, 14vw, 73px); }
