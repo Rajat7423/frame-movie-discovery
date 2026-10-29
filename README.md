@@ -2,12 +2,15 @@
 
 FRAME is a responsive, no-build-step movie discovery site. It includes a handpicked demo catalog, movie search and genre filters, sorting, movie detail sheets, trailer links, similar-film suggestions, and a saved watchlist. A TMDB read access token can be connected in the app to search live results and load full movie credits, runtime, trailers, and recommendations.
 
+## Live site
+
+<https://frame-movie-discovery.onrender.com>
+
 ## Run it
 
-Open `index.html` in a browser, or serve this folder locally:
+Open `index.html` in a browser, or serve this folder locally from the repository root:
 
 ```sh
-cd outputs
 python3 -m http.server 8000
 ```
 
