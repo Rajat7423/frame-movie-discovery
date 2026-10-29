@@ -1,4 +1,4 @@
-const STORE_KEYS = { token: 'frame.tmdb.token', watchlist: 'frame.watchlist' };
+const STORE_KEYS = { token: 'frame.tmdb.token', watchlist: 'frame.watchlist', savedMovies: 'frame.watchlist.movies' };
 const TMDB_IMAGE = 'https://image.tmdb.org/t/p/';
 const TMDB_GENRES = { 28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family', 14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music', 9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie', 53: 'Thriller', 10752: 'War', 37: 'Western' };
 
@@ -14,7 +14,19 @@ const DEMO_MOVIES = [
   { id: 'interstellar', title: 'Interstellar', year: 2014, release_date: '2014-11-07', rating: 8.7, runtime: 169, genres: ['Sci-Fi', 'Adventure'], director: 'Christopher Nolan', country: 'United States', language: 'English', votes: '2,370', popularity: 99, overview: 'As Earth grows inhospitable, a former pilot joins a mission through a wormhole in search of a future for humanity. The journey takes him to places where time and distance mean something entirely new.', cast: [['Matthew McConaughey', 'Cooper'], ['Anne Hathaway', 'Brand'], ['Jessica Chastain', 'Murph']], tagline: 'Mankind was born on Earth. It was never meant to die here.', art: 'space', colors: ['#25343a', '#8e9ca0'], trailerKey: 'zSWdZVtXT7E' },
   { id: 'before-sunrise', title: 'Before Sunrise', year: 1995, release_date: '1995-01-27', rating: 8.1, runtime: 101, genres: ['Romance', 'Drama'], director: 'Richard Linklater', country: 'United States', language: 'English, German, French', votes: '730', popularity: 75, overview: 'A young American and a French student meet on a train and decide to spend one night wandering through Vienna. One conversation leads to another, and the night begins to feel like a life of its own.', cast: [['Ethan Hawke', 'Jesse'], ['Julie Delpy', 'Céline'], ['Andrea Eckert', 'Wife on train']], tagline: 'Can the greatest romance of your life last only one night?', art: 'sunrise', colors: ['#aa6953', '#dbb37c'], trailerKey: '6MUcuqbGTxc' },
   { id: 'spiderverse', title: 'Spider-Man: Across the Spider-Verse', year: 2023, release_date: '2023-06-02', rating: 8.6, runtime: 140, genres: ['Animation', 'Action'], director: 'Joaquim Dos Santos', country: 'United States', language: 'English', votes: '1,680', popularity: 97, overview: 'Miles Morales swings into the multiverse and meets a team of Spider-People protecting its very existence. When they clash over how to handle a new threat, Miles must redefine what being a hero means.', cast: [['Shameik Moore', 'Miles Morales'], ['Hailee Steinfeld', 'Gwen Stacy'], ['Oscar Isaac', 'Miguel O’Hara']], tagline: 'Across the universe.', art: 'web', colors: ['#49348b', '#e64972'], trailerKey: 'cqGjhVJWtEg' },
-  { id: 'little-women', title: 'Little Women', year: 2019, release_date: '2019-12-25', rating: 7.8, runtime: 135, genres: ['Drama', 'Romance'], director: 'Greta Gerwig', country: 'United States', language: 'English', votes: '1,130', popularity: 84, overview: 'Jo March reflects on her spirited life with her sisters. Though their paths diverge, each makes her own way through work, love, loss, and the meaning of home.', cast: [['Saoirse Ronan', 'Jo March'], ['Florence Pugh', 'Amy March'], ['Emma Watson', 'Meg March']], tagline: 'Own your story.', art: 'garden', colors: ['#b97f53', '#e2bd8a'], trailerKey: 'AST2-4db4ic' }
+  { id: 'little-women', title: 'Little Women', year: 2019, release_date: '2019-12-25', rating: 7.8, runtime: 135, genres: ['Drama', 'Romance'], director: 'Greta Gerwig', country: 'United States', language: 'English', votes: '1,130', popularity: 84, overview: 'Jo March reflects on her spirited life with her sisters. Though their paths diverge, each makes her own way through work, love, loss, and the meaning of home.', cast: [['Saoirse Ronan', 'Jo March'], ['Florence Pugh', 'Amy March'], ['Emma Watson', 'Meg March']], tagline: 'Own your story.', art: 'garden', colors: ['#b97f53', '#e2bd8a'], trailerKey: 'AST2-4db4ic' },
+  { id: 'parasite', title: 'Parasite', year: 2019, release_date: '2019-05-30', rating: 8.5, runtime: 132, genres: ['Thriller', 'Drama', 'Comedy'], director: 'Bong Joon-ho', country: 'South Korea', language: 'Korean', votes: '—', popularity: 96, overview: 'The struggling Kim family finds a way into the wealthy Park household, setting off a chain of deceptions that exposes the sharp divide between two families.', cast: [['Song Kang-ho', 'Kim Ki-taek'], ['Lee Sun-kyun', 'Park Dong-ik'], ['Cho Yeo-jeong', 'Choi Yeon-gyo']], tagline: 'Act like you own the place.', art: 'garden', colors: ['#3d5146', '#c4ae83'] },
+  { id: 'oppenheimer', title: 'Oppenheimer', year: 2023, release_date: '2023-07-21', rating: 8.1, runtime: 180, genres: ['Drama', 'History'], director: 'Christopher Nolan', country: 'United States', language: 'English', votes: '—', popularity: 98, overview: 'Physicist J. Robert Oppenheimer and his team race to develop the first atomic bomb, while the consequences of their work reshape his life and the world.', cast: [['Cillian Murphy', 'J. Robert Oppenheimer'], ['Emily Blunt', 'Katherine Oppenheimer'], ['Robert Downey Jr.', 'Lewis Strauss']], tagline: 'The world forever changes.', art: 'stage', colors: ['#4e2925', '#db8854'] },
+  { id: 'everything-everywhere', title: 'Everything Everywhere All at Once', year: 2022, release_date: '2022-03-25', rating: 7.8, runtime: 140, genres: ['Action', 'Adventure', 'Sci-Fi'], director: 'Daniel Kwan & Daniel Scheinert', country: 'United States', language: 'English, Mandarin', votes: '—', popularity: 93, overview: 'An aging Chinese immigrant is swept into an adventure across the multiverse, where the different lives she could have led may hold the key to saving her family.', cast: [['Michelle Yeoh', 'Evelyn Wang'], ['Stephanie Hsu', 'Joy Wang'], ['Ke Huy Quan', 'Waymond Wang']], tagline: 'The universe is so much bigger than you realize.', art: 'web', colors: ['#4f3d89', '#ef9d66'] },
+  { id: 'shawshank', title: 'The Shawshank Redemption', year: 1994, release_date: '1994-09-23', rating: 8.7, runtime: 142, genres: ['Drama'], director: 'Frank Darabont', country: 'United States', language: 'English', votes: '—', popularity: 95, overview: 'Sentenced to life in prison, banker Andy Dufresne builds an unlikely friendship with fellow inmate Red and holds onto hope through years behind bars.', cast: [['Tim Robbins', 'Andy Dufresne'], ['Morgan Freeman', 'Ellis Boyd “Red” Redding'], ['Bob Gunton', 'Warden Norton']], tagline: 'Fear can hold you prisoner. Hope can set you free.', art: 'mountain', colors: ['#354a59', '#9eb3b3'] },
+  { id: 'spirited-away', title: 'Spirited Away', year: 2001, release_date: '2001-07-20', rating: 8.5, runtime: 125, genres: ['Animation', 'Fantasy', 'Adventure'], director: 'Hayao Miyazaki', country: 'Japan', language: 'Japanese', votes: '—', popularity: 91, overview: 'After wandering into a world ruled by spirits, young Chihiro must find the courage and ingenuity to free her parents and return home.', cast: [['Rumi Hiiragi', 'Chihiro Ogino'], ['Miyu Irino', 'Haku'], ['Mari Natsuki', 'Yubaba']], tagline: 'The tunnel led Chihiro to a mysterious town.', art: 'trees', colors: ['#405d62', '#c88a64'] },
+  { id: 'godfather', title: 'The Godfather', year: 1972, release_date: '1972-03-14', rating: 8.7, runtime: 175, genres: ['Drama', 'Crime'], director: 'Francis Ford Coppola', country: 'United States', language: 'English, Italian', votes: '—', popularity: 90, overview: 'The aging patriarch of a powerful crime family prepares to hand control to his reluctant youngest son, drawing the family deeper into a world of loyalty and violence.', cast: [['Marlon Brando', 'Don Vito Corleone'], ['Al Pacino', 'Michael Corleone'], ['James Caan', 'Sonny Corleone']], tagline: 'An offer you can’t refuse.', art: 'stage', colors: ['#251d1a', '#8a6349'] },
+  { id: 'inception', title: 'Inception', year: 2010, release_date: '2010-07-16', rating: 8.4, runtime: 148, genres: ['Action', 'Sci-Fi', 'Adventure'], director: 'Christopher Nolan', country: 'United States', language: 'English, Japanese, French', votes: '—', popularity: 96, overview: 'A skilled thief who steals secrets through shared dreams is offered a chance to return home in exchange for an almost impossible task: plant an idea instead of stealing one.', cast: [['Leonardo DiCaprio', 'Dom Cobb'], ['Joseph Gordon-Levitt', 'Arthur'], ['Elliot Page', 'Ariadne']], tagline: 'Your mind is the scene of the crime.', art: 'space', colors: ['#253343', '#9e9f93'] },
+  { id: 'get-out', title: 'Get Out', year: 2017, release_date: '2017-02-24', rating: 7.6, runtime: 104, genres: ['Mystery', 'Thriller', 'Horror'], director: 'Jordan Peele', country: 'United States', language: 'English', votes: '—', popularity: 86, overview: 'On a weekend visit to meet his girlfriend’s family, Chris senses that the guests’ warm welcome conceals something deeply disturbing.', cast: [['Daniel Kaluuya', 'Chris Washington'], ['Allison Williams', 'Rose Armitage'], ['Bradley Whitford', 'Dean Armitage']], tagline: 'Just because you’re invited, doesn’t mean you’re welcome.', art: 'mountain', colors: ['#242a29', '#a49d78'] },
+  { id: 'mad-max-fury-road', title: 'Mad Max: Fury Road', year: 2015, release_date: '2015-05-15', rating: 7.6, runtime: 120, genres: ['Action', 'Adventure', 'Sci-Fi'], director: 'George Miller', country: 'Australia', language: 'English', votes: '—', popularity: 92, overview: 'In a scorched desert wasteland, Max joins the fearless Furiosa on a high-speed escape from a tyrant and his pursuing army.', cast: [['Tom Hardy', 'Max Rockatansky'], ['Charlize Theron', 'Imperator Furiosa'], ['Nicholas Hoult', 'Nux']], tagline: 'What a lovely day.', art: 'desert', colors: ['#9b4e2e', '#e2b166'] },
+  { id: 'la-la-land', title: 'La La Land', year: 2016, release_date: '2016-12-09', rating: 7.9, runtime: 128, genres: ['Comedy', 'Drama', 'Romance'], director: 'Damien Chazelle', country: 'United States', language: 'English', votes: '—', popularity: 87, overview: 'A jazz pianist and an aspiring actor fall in love while pursuing their creative ambitions in Los Angeles, where success asks its own price.', cast: [['Ryan Gosling', 'Sebastian Wilder'], ['Emma Stone', 'Mia Dolan'], ['John Legend', 'Keith']], tagline: 'Here’s to the fools who dream.', art: 'sunrise', colors: ['#4b528b', '#e07b70'] },
+  { id: 'coco', title: 'Coco', year: 2017, release_date: '2017-11-22', rating: 8.2, runtime: 105, genres: ['Family', 'Animation', 'Music'], director: 'Lee Unkrich', country: 'United States', language: 'English, Spanish', votes: '—', popularity: 90, overview: 'A young musician travels to the Land of the Dead, where he uncovers his family history and the story behind the music he loves.', cast: [['Anthony Gonzalez', 'Miguel'], ['Gael García Bernal', 'Héctor'], ['Benjamin Bratt', 'Ernesto de la Cruz']], tagline: 'The celebration of a lifetime.', art: 'garden', colors: ['#843b68', '#efab57'] },
+  { id: 'knives-out', title: 'Knives Out', year: 2019, release_date: '2019-11-27', rating: 7.8, runtime: 131, genres: ['Comedy', 'Crime', 'Mystery'], director: 'Rian Johnson', country: 'United States', language: 'English', votes: '—', popularity: 89, overview: 'When a celebrated mystery novelist is found dead, a sharp-eyed detective questions each member of the family gathered at the sprawling estate.', cast: [['Daniel Craig', 'Benoit Blanc'], ['Ana de Armas', 'Marta Cabrera'], ['Chris Evans', 'Ransom Drysdale']], tagline: 'A detective with a motive.', art: 'hotel', colors: ['#354148', '#b9825e'] }
 ];
 
 const PALETTE_SHAPES = {
@@ -31,12 +43,13 @@ const PALETTE_SHAPES = {
   garden: '<circle cx="348" cy="134" r="65" fill="#ead4a8"/><path d="M0 354q54-79 121 0t120-22q60-73 117-2t82 5v305H0Z" fill="#8a7452"/><path d="M0 427q88-50 176 8t138-3q72-56 126-2v210H0Z" fill="#68744f"/><path d="M52 524q109-46 179 0t168-3" stroke="#d1a076" stroke-width="20" fill="none" opacity=".7"/><path d="M175 410v126m100-133v137" stroke="#d8b579" stroke-width="5"/>'
 };
 
-const app = { movies: [...DEMO_MOVIES], mode: 'recommended', genre: 'All', query: '', sort: 'recommended', watchlist: readWatchlist(), showingWatchlist: false, page: 1, source: 'demo', lastFocus: null };
-const movieCache = new Map(DEMO_MOVIES.map(movie => [movieId(movie), movie]));
+const app = { movies: [...DEMO_MOVIES], mode: 'recommended', genre: 'All', mood: 'all', year: 'all', minRating: 0, query: '', sort: 'recommended', watchlist: readWatchlist(), showingWatchlist: false, page: 1, totalPages: 1, displayLimit: 8, source: 'demo', lastFocus: null };
+const movieCache = new Map([...DEMO_MOVIES, ...readSavedMovies()].map(movie => [movieId(movie), movie]));
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-function readWatchlist() { try { return JSON.parse(localStorage.getItem(STORE_KEYS.watchlist) || '[]'); } catch { return []; } }
+function readWatchlist() { try { const value = JSON.parse(localStorage.getItem(STORE_KEYS.watchlist) || '[]'); return Array.isArray(value) ? value.map(String) : []; } catch { return []; } }
+function readSavedMovies() { try { const value = JSON.parse(localStorage.getItem(STORE_KEYS.savedMovies) || '[]'); return Array.isArray(value) ? value : []; } catch { return []; } }
 function escapeHTML(value = '') { return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]); }
 function slugTitle(text = '') { return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
 function posterArtwork(movie, wide = false) {
@@ -61,6 +74,7 @@ function saveMovie(movie) {
   if (saved(movie)) app.watchlist = app.watchlist.filter(entry => entry !== id);
   else app.watchlist = [id, ...app.watchlist];
   localStorage.setItem(STORE_KEYS.watchlist, JSON.stringify(app.watchlist));
+  localStorage.setItem(STORE_KEYS.savedMovies, JSON.stringify(app.watchlist.map(entry => movieCache.get(entry)).filter(Boolean)));
   $('#watchlist-count').textContent = app.watchlist.length;
   renderMovies();
   updateFeatureSave();
@@ -72,7 +86,7 @@ function showToast(message) {
 }
 function setSourceLabel() {
   const live = app.source === 'tmdb';
-  $('#source-hint').textContent = live ? 'Live movie data · powered by TMDB' : 'A handpicked collection, ready to explore.';
+  $('#source-hint').textContent = live ? 'Live movie data · powered by TMDB' : `${DEMO_MOVIES.length} real films · sample ratings · connect TMDB for live data.`;
   $('#tmdb-credit').hidden = !live;
 }
 
@@ -96,7 +110,7 @@ function apiSort() {
 }
 async function refreshCatalog({ append = false } = {}) {
   const token = localStorage.getItem(STORE_KEYS.token);
-  if (!token) { app.source = 'demo'; app.movies = [...DEMO_MOVIES]; render(); return; }
+  if (!token) { app.source = 'demo'; app.movies = [...DEMO_MOVIES]; app.totalPages = 1; render(); return; }
   const nextPage = append ? app.page + 1 : 1;
   $('#grid-summary').textContent = 'Finding films…';
   try {
@@ -107,11 +121,12 @@ async function refreshCatalog({ append = false } = {}) {
     incoming.forEach(movie => movieCache.set(movieId(movie), movie));
     app.movies = append ? [...app.movies, ...incoming] : incoming;
     app.page = nextPage;
+    app.totalPages = result.total_pages || 1;
     app.source = 'tmdb';
     $('#load-more').hidden = !result.total_pages || result.page >= result.total_pages;
     setSourceLabel(); renderMovies();
   } catch (error) {
-    app.source = 'demo'; app.movies = [...DEMO_MOVIES];
+    app.source = 'demo'; app.movies = [...DEMO_MOVIES]; app.totalPages = 1;
     setSourceLabel(); renderMovies();
     showToast(`TMDB connection failed: ${error.message}`);
     $('#settings-status').textContent = 'Could not connect. Check the token and try again.';
@@ -134,13 +149,13 @@ function updateFeatureSave() {
 }
 function genreList() {
   const genres = ['All', ...new Set(app.movies.flatMap(movieGenres))];
-  return genres.slice(0, 9);
+  return genres;
 }
 function renderGenres() {
   const target = $('#genre-filters');
   target.innerHTML = genreList().map(genre => `<button type="button" class="genre-chip ${app.genre === genre ? 'is-active' : ''}" data-genre="${escapeHTML(genre)}" aria-pressed="${app.genre === genre}">${escapeHTML(genre)}</button>`).join('');
   $$('.genre-chip', target).forEach(button => button.addEventListener('click', () => {
-    app.genre = button.dataset.genre; app.page = 1;
+    app.genre = button.dataset.genre; app.page = 1; app.displayLimit = 8;
     if (app.source === 'tmdb' && !app.query) refreshCatalog(); else renderMovies();
     renderGenres();
   }));
@@ -153,9 +168,39 @@ function currentMovies() {
     list = list.filter(movie => [movie.title, movie.director, movie.overview, ...(movie.cast || []).map(person => person[0]), ...movieGenres(movie)].join(' ').toLowerCase().includes(query));
   }
   if (app.genre !== 'All') list = list.filter(movie => movieGenres(movie).some(genre => genre.toLowerCase() === app.genre.toLowerCase()));
+  if (app.mood !== 'all') {
+    const moodGenres = {
+      'feel-good': ['comedy', 'family', 'animation', 'romance'],
+      'mind-bending': ['sci-fi', 'science fiction', 'mystery'],
+      'edge-of-seat': ['thriller', 'crime', 'horror', 'action'],
+      thoughtful: ['drama', 'history', 'documentary']
+    }[app.mood] || [];
+    list = list.filter(movie => movieGenres(movie).some(genre => moodGenres.includes(genre.toLowerCase())));
+  }
+  if (app.year !== 'all') {
+    list = list.filter(movie => {
+      const releaseYear = Number(movieYear(movie));
+      if (!Number.isFinite(releaseYear) || !releaseYear) return false;
+      return app.year === 'classics' ? releaseYear < 1990 : releaseYear >= Number(app.year.slice(0, 4)) && releaseYear < Number(app.year.slice(0, 4)) + 10;
+    });
+  }
+  if (app.minRating) list = list.filter(movie => rating(movie) >= app.minRating);
   if (app.sort === 'rating' || app.mode === 'top') list.sort((a, b) => rating(b) - rating(a));
   if (app.sort === 'newest') list.sort((a, b) => movieYear(b).localeCompare(movieYear(a)));
   if (app.sort === 'popular' || app.mode === 'popular') list.sort((a, b) => (b.popularity || rating(b)) - (a.popularity || rating(a)));
+  if (app.mode === 'recommended' && app.sort === 'recommended' && !app.showingWatchlist && app.watchlist.length) {
+    const favorites = app.watchlist.map(id => movieCache.get(id)).filter(Boolean);
+    if (favorites.length) {
+      const affinity = new Map();
+      favorites.forEach(movie => movieGenres(movie).forEach(genre => affinity.set(genre, (affinity.get(genre) || 0) + 1)));
+      const savedIds = new Set(app.watchlist);
+      list = list.filter(movie => !savedIds.has(movieId(movie)));
+      list.sort((a, b) => {
+        const affinityScore = movie => movieGenres(movie).reduce((sum, genre) => sum + (affinity.get(genre) || 0), 0);
+        return affinityScore(b) - affinityScore(a) || rating(b) - rating(a);
+      });
+    }
+  }
   return list;
 }
 function cardMarkup(movie) {
@@ -167,17 +212,22 @@ function cardMarkup(movie) {
 }
 function renderMovies() {
   renderGenres();
-  const list = currentMovies();
+  const allMovies = currentMovies();
+  const list = app.source === 'tmdb' ? allMovies : allMovies.slice(0, app.displayLimit);
   const grid = $('#movie-grid'), empty = $('#empty-state');
   grid.innerHTML = list.map(cardMarkup).join('');
   empty.hidden = list.length > 0;
   grid.hidden = list.length === 0;
-  $('#load-more').hidden = app.source !== 'tmdb' || app.showingWatchlist;
-  $('#grid-summary').textContent = app.showingWatchlist ? `${list.length} saved ${list.length === 1 ? 'film' : 'films'}` : `${list.length} ${app.source === 'tmdb' ? 'live results' : 'films'}${app.query ? ` for “${app.query}”` : ''}`;
-  $('#browse-title').innerHTML = app.showingWatchlist ? 'Your watchlist<span class="title-period">.</span>' : app.query ? `Search results<span class="title-period">.</span>` : app.mode === 'popular' ? 'Popular right now<span class="title-period">.</span>' : app.mode === 'top' ? 'The highest rated<span class="title-period">.</span>' : 'Films worth your time<span class="title-period">.</span>';
-  $('#results-kicker').textContent = app.showingWatchlist ? 'SAVED FOR LATER' : app.query ? 'YOUR SEARCH' : 'THE EDIT';
+  $('#grid-summary').textContent = app.showingWatchlist ? `${allMovies.length} saved ${allMovies.length === 1 ? 'film' : 'films'}` : app.query ? `${allMovies.length} ${app.source === 'tmdb' ? 'live results' : 'curated films'} for “${app.query}”` : app.source === 'tmdb' ? `${allMovies.length} live movie results` : app.mode === 'recommended' && app.watchlist.length ? `Picked around your ${app.watchlist.length === 1 ? 'saved film' : 'watchlist'} · showing ${list.length} of ${allMovies.length}` : `Showing ${list.length} of ${allMovies.length} curated films`;
+  const moodTitles = { 'feel-good': 'A little joy', 'mind-bending': 'Mind-bending films', 'edge-of-seat': 'Edge-of-your-seat stories', thoughtful: 'Thoughtful films' };
+  $('#browse-title').innerHTML = app.showingWatchlist ? 'Your watchlist<span class="title-period">.</span>' : app.query ? 'Search results<span class="title-period">.</span>' : app.mood !== 'all' ? `${escapeHTML(moodTitles[app.mood] || 'Films for this mood')}<span class="title-period">.</span>` : app.mode === 'popular' ? 'Popular right now<span class="title-period">.</span>' : app.mode === 'top' ? 'The highest rated<span class="title-period">.</span>' : app.mode === 'recommended' && app.watchlist.length ? 'Picked for you<span class="title-period">.</span>' : 'Films worth your time<span class="title-period">.</span>';
+  $('#results-kicker').textContent = app.showingWatchlist ? 'SAVED FOR LATER' : app.query ? 'YOUR SEARCH' : app.mood !== 'all' ? 'PICK YOUR MOOD' : app.mode === 'recommended' && app.watchlist.length ? 'YOUR PERSONAL EDIT' : 'THE EDIT';
+  const pages = app.source === 'tmdb' ? Math.max(1, app.totalPages) : Math.max(1, Math.ceil(allMovies.length / 8));
+  const shownPage = app.source === 'tmdb' ? Math.max(1, Math.ceil(app.page)) : Math.min(pages, Math.max(1, Math.ceil(list.length / 8)));
+  $('#grid-page').innerHTML = `${String(shownPage).padStart(2, '0')} <i></i> ${String(pages).padStart(2, '0')}`;
+  $('#load-more').hidden = app.source === 'tmdb' ? app.showingWatchlist || app.page >= app.totalPages : app.showingWatchlist || allMovies.length <= app.displayLimit;
   $$('.movie-card', grid).forEach(card => {
-    const movie = app.movies.find(item => movieId(item) === card.dataset.id);
+    const movie = movieCache.get(card.dataset.id) || app.movies.find(item => movieId(item) === card.dataset.id);
     card.addEventListener('click', event => { if (!event.target.closest('[data-save]')) openDetails(movie); });
     card.addEventListener('keydown', event => { if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('[data-save]')) { event.preventDefault(); openDetails(movie); } });
     const saveButton = $('[data-save]', card);
@@ -203,9 +253,9 @@ function detailMarkup(movie) {
   const language = movie.language || movie.original_language?.toUpperCase() || '—';
   const release = movie.release_date ? new Date(`${movie.release_date}T12:00:00`).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : movieYear(movie);
   const runtime = movie.runtime ? `${movie.runtime} min` : 'Not listed';
-  return `<div class="detail-hero"><img class="detail-backdrop" src="${posterArtwork(movie, true)}" alt="" /><div class="detail-hero-copy"><p class="detail-kicker">A FRAME FILM PROFILE</p><h2 id="detail-title">${escapeHTML(movie.title)}</h2><div class="detail-meta"><span>${escapeHTML(movieYear(movie))}</span><span>·</span><span>${escapeHTML(runtime)}</span><span>·</span><span class="detail-rating">★ ${rating(movie).toFixed(1)}</span><span>·</span><span>${escapeHTML(language)}</span></div></div></div>
+  return `<div class="detail-hero"><img class="detail-backdrop" src="${posterArtwork(movie, true)}" alt="" /><div class="detail-hero-copy"><p class="detail-kicker">A FRAME FILM PROFILE</p><h2 id="detail-title">${escapeHTML(movie.title)}</h2><div class="detail-meta"><span>${escapeHTML(movieYear(movie))}</span><span>·</span><span>${escapeHTML(runtime)}</span><span>·</span><span class="detail-rating">★ ${rating(movie).toFixed(1)}</span><span>·</span><span>${escapeHTML(language)}</span></div><button class="button button-light detail-watchlist" type="button" data-detail-save>${saved(movie) ? '✓ In your watchlist' : '＋ Add to watchlist'}</button></div></div>
   <div class="detail-body"><div class="detail-left"><p class="detail-section-label">THE STORY</p><p class="detail-overview">${escapeHTML(movie.overview || 'No overview is available for this film yet.')}</p><div class="detail-section"><p class="detail-section-label">GENRES</p><div class="genre-tags">${genres.map(genre => `<span>${escapeHTML(genre)}</span>`).join('') || '<span>Uncategorized</span>'}</div></div><div class="detail-section"><p class="detail-section-label">THE DETAILS</p><div class="crew-row"><b>Release</b> ${escapeHTML(release)} <span>·</span> <b>Runtime</b> ${escapeHTML(runtime)} <span>·</span> <b>Country</b> ${escapeHTML(movie.country || '—')}</div></div><div class="detail-section"><p class="detail-section-label">TRAILER</p><div class="trailer-panel"><div class="trailer-copy"><span class="play-icon">▶</span><span><b>See it in motion</b><span>OFFICIAL TRAILER · OPENS YOUTUBE</span></span></div><a class="trailer-button" href="${trailerLink}" target="_blank" rel="noreferrer">${trailerLabel} <span>↗</span></a></div></div></div>
-  <aside class="detail-right"><p class="detail-section-label">CAST</p><ul class="cast-list">${cast.length ? cast.slice(0, 5).map(person => `<li><b>${escapeHTML(person[0])}</b><span>${escapeHTML(person[1] || '')}</span></li>`).join('') : '<li><b>Cast information</b><span>Connect TMDB for full credits</span></li>'}</ul><div class="detail-section"><p class="detail-section-label">DIRECTED BY</p><div class="crew-row">${escapeHTML(movie.director || 'Not listed')}</div></div><div class="detail-section"><p class="detail-section-label">A LITTLE CONTEXT</p><div class="crew-row">${escapeHTML(movie.tagline || (movie.votes ? `${Number(movie.votes).toLocaleString()} ratings on TMDB` : 'A FRAME collection pick'))}</div></div></aside></div>
+  <aside class="detail-right"><p class="detail-section-label">CAST</p><ul class="cast-list">${cast.length ? cast.slice(0, 5).map(person => `<li><b>${escapeHTML(person[0])}</b><span>${escapeHTML(person[1] || '')}</span></li>`).join('') : '<li><b>Cast information</b><span>Connect TMDB for full credits</span></li>'}</ul><div class="detail-section"><p class="detail-section-label">DIRECTED BY</p><div class="crew-row">${escapeHTML(movie.director || 'Not listed')}</div></div><div class="detail-section"><p class="detail-section-label">A LITTLE CONTEXT</p><div class="crew-row">${escapeHTML(movie.tagline || (movie.vote_count ? `${Number(movie.vote_count).toLocaleString()} TMDB ratings` : 'A FRAME collection pick'))}</div></div></aside></div>
   <div class="detail-bottom"><p class="detail-section-label">YOU MIGHT ALSO LIKE</p><div class="recommendations">${similar.slice(0, 4).map(item => `<button class="recommendation" type="button" data-recommend="${escapeHTML(movieId(item))}"><img src="${posterArtwork(item)}" alt="" loading="lazy"/><span>${escapeHTML(item.title)}</span><small>${escapeHTML(movieYear(item))} · ★ ${rating(item).toFixed(1)}</small></button>`).join('') || '<p class="detail-overview">More recommendations appear when live movie data is connected.</p>'}</div></div>`;
 }
 async function openDetails(movie) {
@@ -222,6 +272,12 @@ async function openDetails(movie) {
   } else bindRecommendations(movie);
 }
 function bindRecommendations(movie) {
+  const saveButton = $('[data-detail-save]', $('#detail-content'));
+  saveButton?.addEventListener('click', () => {
+    const isSaved = saveMovie(movie);
+    saveButton.textContent = isSaved ? '✓ In your watchlist' : '＋ Add to watchlist';
+    showToast(isSaved ? 'Added to your watchlist.' : 'Removed from your watchlist.');
+  });
   $$('.recommendation', $('#detail-content')).forEach(button => button.addEventListener('click', () => {
     const id = button.dataset.recommend;
     const rec = movie.similar?.find(item => movieId(item) === id) || app.movies.find(item => movieId(item) === id) || DEMO_MOVIES.find(item => movieId(item) === id);
@@ -230,13 +286,16 @@ function bindRecommendations(movie) {
 }
 function closeModal(modal) { modal.hidden = true; document.body.style.overflow = ''; app.lastFocus?.focus?.(); }
 function activateMode(mode) {
-  app.showingWatchlist = false; app.mode = mode; app.page = 1;
+  app.showingWatchlist = false; app.mode = mode; app.page = 1; app.displayLimit = 8;
   $$('.mode-tab').forEach(tab => { const active = tab.dataset.mode === mode; tab.classList.toggle('is-active', active); tab.setAttribute('aria-selected', String(active)); });
   $('#watchlist-nav').classList.remove('is-current'); $('#discover-nav').classList.add('is-current');
   if (app.source === 'tmdb' && !app.query) refreshCatalog(); else renderMovies();
 }
 function showWatchlist() {
   app.showingWatchlist = true;
+  app.query = ''; app.genre = 'All'; app.mood = 'all'; app.year = 'all'; app.minRating = 0; app.displayLimit = 8;
+  $('#search-input').value = ''; $('#year-filter').value = 'all'; $('#rating-filter').value = '0';
+  $$('.mood-chip').forEach(button => { const active = button.dataset.mood === 'all'; button.classList.toggle('is-active', active); button.setAttribute('aria-pressed', String(active)); });
   $('#discover-nav').classList.remove('is-current'); $('#watchlist-nav').classList.add('is-current');
   $$('.mode-tab').forEach(tab => { tab.classList.remove('is-active'); tab.setAttribute('aria-selected', 'false'); });
   renderMovies(); $('#browse').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -246,15 +305,19 @@ function debounce(fn, delay) { let timer; return (...args) => { clearTimeout(tim
 renderFeature();
 $('#watchlist-count').textContent = app.watchlist.length;
 render();
-$('#search-input').addEventListener('input', debounce(event => { app.query = event.target.value.trim(); app.showingWatchlist = false; app.page = 1; if (app.source === 'tmdb') refreshCatalog(); else renderMovies(); }, 320));
-$('#search-input').addEventListener('keydown', event => { if (event.key === 'Escape') { event.currentTarget.value = ''; app.query = ''; renderMovies(); } });
+$('#search-input').addEventListener('input', debounce(event => { app.query = event.target.value.trim(); app.showingWatchlist = false; app.page = 1; app.displayLimit = 8; if (app.source === 'tmdb') refreshCatalog(); else renderMovies(); }, 320));
+$('#search-input').addEventListener('keydown', event => { if (event.key === 'Escape') { event.currentTarget.value = ''; app.query = ''; app.page = 1; if (app.source === 'tmdb') refreshCatalog(); else renderMovies(); } });
 document.addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); $('#search-input').focus(); } if (event.key === 'Escape') { if (!$('#detail-modal').hidden) closeModal($('#detail-modal')); if (!$('#settings-modal').hidden) closeModal($('#settings-modal')); } });
 $('#mode-tabs').addEventListener('click', event => { const tab = event.target.closest('[data-mode]'); if (tab) activateMode(tab.dataset.mode); });
 $('#discover-nav').addEventListener('click', () => { app.showingWatchlist = false; $('#watchlist-nav').classList.remove('is-current'); $('#discover-nav').classList.add('is-current'); activateMode('recommended'); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 $('#watchlist-nav').addEventListener('click', showWatchlist);
-$('#sort-select').addEventListener('change', event => { app.sort = event.target.value; if (app.source === 'tmdb' && !app.query) refreshCatalog(); else renderMovies(); });
-$('#clear-filters').addEventListener('click', () => { app.query = ''; app.genre = 'All'; app.showingWatchlist = false; $('#search-input').value = ''; renderMovies(); });
-$('#load-more').addEventListener('click', () => refreshCatalog({ append: true }));
+$('#sort-select').addEventListener('change', event => { app.sort = event.target.value; app.displayLimit = 8; if (app.source === 'tmdb' && !app.query) refreshCatalog(); else renderMovies(); });
+$('#clear-filters').addEventListener('click', () => { app.query = ''; app.genre = 'All'; app.mood = 'all'; app.year = 'all'; app.minRating = 0; app.displayLimit = 8; app.page = 1; app.showingWatchlist = false; $('#search-input').value = ''; $('#year-filter').value = 'all'; $('#rating-filter').value = '0'; $$('.mood-chip').forEach(button => { const active = button.dataset.mood === 'all'; button.classList.toggle('is-active', active); button.setAttribute('aria-pressed', String(active)); }); if (app.source === 'tmdb') refreshCatalog(); else renderMovies(); });
+$('#load-more').addEventListener('click', () => { if (app.source === 'tmdb' && !app.showingWatchlist) refreshCatalog({ append: true }); else { app.displayLimit += 8; renderMovies(); } });
+$('#random-pick').addEventListener('click', () => { const candidates = currentMovies(); if (!candidates.length) { showToast('No films match these filters yet.'); return; } openDetails(candidates[Math.floor(Math.random() * candidates.length)]); });
+$('#mood-filters').addEventListener('click', event => { const button = event.target.closest('[data-mood]'); if (!button) return; app.mood = button.dataset.mood; app.displayLimit = 8; $$('.mood-chip').forEach(chip => { const active = chip === button; chip.classList.toggle('is-active', active); chip.setAttribute('aria-pressed', String(active)); }); renderMovies(); });
+$('#year-filter').addEventListener('change', event => { app.year = event.target.value; app.displayLimit = 8; renderMovies(); });
+$('#rating-filter').addEventListener('change', event => { app.minRating = Number(event.target.value); app.displayLimit = 8; renderMovies(); });
 
 const settingsModal = $('#settings-modal');
 function openSettings() { app.lastFocus = document.activeElement; $('#api-token').value = localStorage.getItem(STORE_KEYS.token) || ''; $('#settings-status').textContent = ''; settingsModal.hidden = false; document.body.style.overflow = 'hidden'; $('.modal-close', settingsModal).focus(); }

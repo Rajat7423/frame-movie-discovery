@@ -67,15 +67,18 @@
               <p class="eyebrow eyebrow-small" id="results-kicker">THE EDIT</p>
               <h2 id="browse-title">Films worth your time<span class="title-period">.</span></h2>
             </div>
-            <label class="sort-control">Sort by
-              <select id="sort-select" aria-label="Sort movies">
-                <option value="recommended">Our picks</option>
-                <option value="rating">Highest rated</option>
-                <option value="newest">Newest first</option>
-                <option value="popular">Most popular</option>
-              </select>
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
-            </label>
+            <div class="browse-actions">
+              <button class="surprise-button" id="random-pick" type="button"><span>✳</span> Surprise me <b aria-hidden="true">↗</b></button>
+              <label class="sort-control">Sort by
+                <select id="sort-select" aria-label="Sort movies">
+                  <option value="recommended">Our picks</option>
+                  <option value="rating">Highest rated</option>
+                  <option value="newest">Newest first</option>
+                  <option value="popular">Most popular</option>
+                </select>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+              </label>
+            </div>
           </div>
 
           <div class="filter-row">
@@ -87,7 +90,40 @@
             <div class="genre-filters" id="genre-filters" aria-label="Filter by genre"></div>
           </div>
 
-          <div class="grid-meta"><p id="grid-summary">A few favourites to get you started</p><span class="grid-page">01 <i></i> 03</span></div>
+          <div class="discovery-tools">
+            <div class="mood-tools">
+              <span class="tool-label">IN THE MOOD FOR</span>
+              <div class="mood-filters" id="mood-filters" role="group" aria-label="Filter by mood">
+                <button type="button" class="mood-chip is-active" data-mood="all" aria-pressed="true">Anything</button>
+                <button type="button" class="mood-chip" data-mood="feel-good" aria-pressed="false">A little joy</button>
+                <button type="button" class="mood-chip" data-mood="mind-bending" aria-pressed="false">Mind-bending</button>
+                <button type="button" class="mood-chip" data-mood="edge-of-seat" aria-pressed="false">Edge of your seat</button>
+                <button type="button" class="mood-chip" data-mood="thoughtful" aria-pressed="false">Thoughtful</button>
+              </div>
+            </div>
+            <div class="range-filters">
+              <label class="compact-filter">ERA
+                <select id="year-filter" aria-label="Filter by era">
+                  <option value="all">Any year</option>
+                  <option value="2020s">2020s</option>
+                  <option value="2010s">2010s</option>
+                  <option value="2000s">2000s</option>
+                  <option value="1990s">1990s</option>
+                  <option value="classics">Before 1990</option>
+                </select>
+              </label>
+              <label class="compact-filter">RATING
+                <select id="rating-filter" aria-label="Minimum rating">
+                  <option value="0">Any score</option>
+                  <option value="7">7.0+</option>
+                  <option value="8">8.0+</option>
+                  <option value="8.5">8.5+</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="grid-meta"><p id="grid-summary">A few favourites to get you started</p><span class="grid-page" id="grid-page">01 <i></i> 03</span></div>
           <div class="movie-grid" id="movie-grid" aria-live="polite"></div>
           <div class="empty-state" id="empty-state" hidden>
             <span class="empty-icon">⌕</span>
