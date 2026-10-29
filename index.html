@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f3ef" />
+    <meta name="description" content="A considered guide to what to watch next. Discover films, explore the details, and save the ones you love." />
+    <title>FRAME — Find your next favourite</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="Frame home">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>FRAME</span>
+          <span class="brand-period">.</span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <button class="nav-link is-current" id="discover-nav" type="button">Discover</button>
+          <button class="nav-link watchlist-link" id="watchlist-nav" type="button">Watchlist <span id="watchlist-count">0</span></button>
+        </nav>
+        <button class="settings-button" id="settings-open" type="button" aria-label="Configure movie data source" title="Data source settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8Z"/><path d="m19.4 13.5 1.1.9-1.1 1.9-1.4-.5a7.8 7.8 0 0 1-1.5.9l-.3 1.5h-2.3l-.4-1.5a7.3 7.3 0 0 1-1.6-.1l-1 1.1-2-1 .5-1.5a7.6 7.6 0 0 1-.9-1.5l-1.5-.3v-2.3l1.5-.4a7.3 7.3 0 0 1 .1-1.6L5.5 8l1-2 1.5.5a7.6 7.6 0 0 1 1.5-.9l.3-1.5h2.3l.4 1.5a7.3 7.3 0 0 1 1.6.1l1-1.1 2 1-.5 1.5a7.6 7.6 0 0 1 .9 1.5l1.5.3v2.3l-1.5.4a7.3 7.3 0 0 1-.1 1.6Z"/></svg>
+        </button>
+      </header>
+
+      <main id="top">
+        <section class="intro-section" aria-labelledby="page-title">
+          <div class="intro-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> A little less scrolling, a lot more cinema</p>
+            <h1 id="page-title">Find your next<br /><em>favourite.</em></h1>
+          </div>
+          <p class="intro-note">Good films stay with you.<br />Let’s find one that will.</p>
+        </section>
+
+        <section class="search-section" aria-label="Search movies">
+          <label class="search-box" for="search-input">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.2 4.2"/></svg>
+            <input id="search-input" type="search" placeholder="Search a film, director, actor…" autocomplete="off" />
+            <kbd>⌘ K</kbd>
+          </label>
+          <span class="search-hint" id="source-hint">A handpicked collection, ready to explore.</span>
+        </section>
+
+        <section class="feature-card" aria-label="Featured film">
+          <div class="feature-image-wrap"><img id="feature-art" alt="" /></div>
+          <div class="feature-shade"></div>
+          <div class="feature-content">
+            <p class="feature-label"><span class="sparkle">✳</span> FRAME’S PICK <span class="feature-label-rule"></span> THIS WEEK</p>
+            <h2 id="feature-title">Past Lives</h2>
+            <p class="feature-subtitle" id="feature-subtitle">A love story across time, distance, and the lives we almost lived.</p>
+            <div class="feature-facts" id="feature-facts"></div>
+            <div class="feature-actions">
+              <button class="button button-light" id="feature-details" type="button">Explore film <span aria-hidden="true">↗</span></button>
+              <button class="button button-ghost" id="feature-save" type="button"><span aria-hidden="true">＋</span> Add to watchlist</button>
+            </div>
+          </div>
+          <div class="feature-index"><span>01</span><i></i> 04</div>
+          <span class="feature-caption">A film by Celine Song</span>
+        </section>
+
+        <section class="browse-section" id="browse" aria-labelledby="browse-title">
+          <div class="section-topline">
+            <div>
+              <p class="eyebrow eyebrow-small" id="results-kicker">THE EDIT</p>
+              <h2 id="browse-title">Films worth your time<span class="title-period">.</span></h2>
+            </div>
+            <label class="sort-control">Sort by
+              <select id="sort-select" aria-label="Sort movies">
+                <option value="recommended">Our picks</option>
+                <option value="rating">Highest rated</option>
+                <option value="newest">Newest first</option>
+                <option value="popular">Most popular</option>
+              </select>
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+            </label>
+          </div>
+
+          <div class="filter-row">
+            <div class="mode-tabs" id="mode-tabs" role="tablist" aria-label="Movie collections">
+              <button type="button" class="mode-tab is-active" role="tab" aria-selected="true" data-mode="recommended">For you</button>
+              <button type="button" class="mode-tab" role="tab" aria-selected="false" data-mode="popular">Popular</button>
+              <button type="button" class="mode-tab" role="tab" aria-selected="false" data-mode="top">Top rated</button>
+            </div>
+            <div class="genre-filters" id="genre-filters" aria-label="Filter by genre"></div>
+          </div>
+
+          <div class="grid-meta"><p id="grid-summary">A few favourites to get you started</p><span class="grid-page">01 <i></i> 03</span></div>
+          <div class="movie-grid" id="movie-grid" aria-live="polite"></div>
+          <div class="empty-state" id="empty-state" hidden>
+            <span class="empty-icon">⌕</span>
+            <h3>No films found just yet.</h3>
+            <p>Try a different title or clear the filters.</p>
+            <button type="button" class="text-button" id="clear-filters">Clear filters <span aria-hidden="true">↗</span></button>
+          </div>
+          <button type="button" class="load-more" id="load-more">Show me more films <span aria-hidden="true">↓</span></button>
+        </section>
+
+        <section class="closing-note">
+          <span class="closing-star">✳</span>
+          <p>Every film is a little doorway.<br /><em>Take the one that calls to you.</em></p>
+          <span class="closing-credit">THE FRAME EDIT · EST. 2025</span>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a class="brand brand-footer" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>FRAME</span><span class="brand-period">.</span></a>
+        <p>Made for the love of a good story.</p>
+        <button type="button" class="footer-settings" id="footer-settings">About this collection <span>↗</span></button>
+        <small class="tmdb-credit" id="tmdb-credit" hidden>This product uses the TMDB API but is not endorsed or certified by TMDB.</small>
+      </footer>
+    </div>
+
+    <div class="modal-backdrop" id="detail-modal" hidden>
+      <section class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+        <button type="button" class="modal-close" data-close aria-label="Close movie details">×</button>
+        <div id="detail-content"></div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop settings-backdrop" id="settings-modal" hidden>
+      <section class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <button type="button" class="modal-close" data-close aria-label="Close settings">×</button>
+        <p class="eyebrow eyebrow-small">MAKE IT YOURS</p>
+        <h2 id="settings-title">Choose your<br /><em>movie source.</em></h2>
+        <p class="settings-description">Use the FRAME collection on its own, or connect a TMDB read access token to search their live movie catalog and open full film details.</p>
+        <label class="token-label" for="api-token">TMDB API Read Access Token <span>optional</span></label>
+        <div class="token-input-row"><input id="api-token" type="password" placeholder="Paste your read access token" autocomplete="off" /><button type="button" id="token-visibility" aria-label="Show token">Show</button></div>
+        <p class="token-help">Your token is saved only in this browser. <a href="https://developer.themoviedb.org/docs/authentication-application" target="_blank" rel="noreferrer">Where to find it ↗</a></p>
+        <div class="settings-actions"><button class="button button-dark" type="button" id="save-token">Save &amp; connect <span aria-hidden="true">↗</span></button><button class="text-button" type="button" id="remove-token">Use demo collection</button></div>
+        <p class="settings-status" id="settings-status" aria-live="polite"></p>
+      </section>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
