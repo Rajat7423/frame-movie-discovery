@@ -1,6 +1,11 @@
 const STORE_KEYS = { token: 'frame.tmdb.token', watchlist: 'frame.watchlist', savedMovies: 'frame.watchlist.movies' };
 const TMDB_IMAGE = 'https://image.tmdb.org/t/p/';
 const TMDB_GENRES = { 28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family', 14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music', 9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie', 53: 'Thriller', 10752: 'War', 37: 'Western' };
+const LIVE_COLLECTIONS = {
+  hollywood: { label: 'Hollywood', limit: 4000, origin: 'US' },
+  bollywood: { label: 'Bollywood', limit: 2000, origin: 'IN', language: 'hi' },
+  tollywood: { label: 'Tollywood · Telugu', limit: 1000, origin: 'IN', language: 'te' }
+};
 
 const DEMO_MOVIES = [
   { id: 'past-lives', title: 'Past Lives', year: 2023, release_date: '2023-06-02', rating: 7.7, runtime: 106, genres: ['Drama', 'Romance'], director: 'Celine Song', country: 'United States', language: 'English, Korean', votes: '1,340', popularity: 85, overview: 'Two deeply connected childhood friends are wrested apart after one family emigrates from South Korea. Decades later, they reunite for one fateful week as they confront ideas of destiny, love, and the choices that make a life.', cast: [['Greta Lee', 'Nora'], ['Teo Yoo', 'Hae Sung'], ['John Magaro', 'Arthur']], tagline: 'What a life we could have had.', art: 'moon', colors: ['#b78978', '#d8bca4'], trailerKey: 'kA244xewjcI' },
@@ -110,7 +115,7 @@ const PALETTE_SHAPES = {
   mustard: '<circle cx="334" cy="138" r="53" fill="#f2ce75"/><path d="M0 382q82-84 170-2t270-6v266H0Z" fill="#78834b"/><path d="M0 472q101-55 190 6t250-4v166H0Z" fill="#586d41"/><path d="M0 561q107-50 221-3t219-3v85H0Z" fill="#405b3c"/><g fill="#f2cf61"><circle cx="52" cy="431" r="7"/><circle cx="93" cy="500" r="7"/><circle cx="144" cy="415" r="7"/><circle cx="304" cy="484" r="8"/><circle cx="369" cy="421" r="7"/><circle cx="224" cy="540" r="7"/></g><circle cx="161" cy="401" r="25" fill="none" stroke="#292b28" stroke-width="7"/><circle cx="274" cy="401" r="25" fill="none" stroke="#292b28" stroke-width="7"/><path d="M161 401 208 345l66 56-40-68m-25 12 39-8" fill="none" stroke="#292b28" stroke-width="8" stroke-linecap="round"/>'
 };
 
-const app = { movies: [...DEMO_MOVIES], mode: 'recommended', genre: 'All', mood: 'all', year: 'all', minRating: 0, query: '', sort: 'recommended', watchlist: readWatchlist(), showingWatchlist: false, page: 1, totalPages: 1, displayLimit: 8, source: 'demo', lastFocus: null };
+const app = { movies: [...DEMO_MOVIES], mode: 'recommended', genre: 'All', mood: 'all', year: 'all', minRating: 0, query: '', sort: 'recommended', watchlist: readWatchlist(), showingWatchlist: false, page: 1, totalPages: 1, totalResults: DEMO_MOVIES.length, displayLimit: 8, source: 'demo', lastFocus: null };
 const movieCache = new Map([...DEMO_MOVIES, ...readSavedMovies()].map(movie => [movieId(movie), movie]));
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -120,8 +125,10 @@ function readSavedMovies() { try { const value = JSON.parse(localStorage.getItem
 function escapeHTML(value = '') { return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]); }
 function slugTitle(text = '') { return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
 function posterArtwork(movie, wide = false) {
-  if (movie.poster_path) return TMDB_IMAGE + (wide ? 'w1280' : 'w500') + movie.poster_path;
-  if (movie.backdrop_path && wide) return TMDB_IMAGE + 'w1280' + movie.backdrop_path;
+  if (wide && movie.backdrop_path) return TMDB_IMAGE + 'original' + movie.backdrop_path;
+  if (!wide && movie.poster_path) return TMDB_IMAGE + 'w500' + movie.poster_path;
+  if (wide && movie.poster_path) return TMDB_IMAGE + 'original' + movie.poster_path;
+  if (movie.backdrop_path) return TMDB_IMAGE + 'w500' + movie.backdrop_path;
   const [first, second] = movie.colors || ['#6a7470', '#d8bca4'];
   const shapes = PALETTE_SHAPES[movie.art] || PALETTE_SHAPES.moon;
   const title = escapeHTML(movie.title || 'Untitled');
@@ -153,7 +160,10 @@ function showToast(message) {
 }
 function setSourceLabel() {
   const live = app.source === 'tmdb';
-  $('#source-hint').textContent = live ? 'Live movie data · powered by TMDB' : `${DEMO_MOVIES.length} real films · original poster art · sample ratings · connect TMDB for live data.`;
+  const collection = LIVE_COLLECTIONS[app.mode];
+  $('#source-hint').textContent = live
+    ? collection ? `TMDB live · up to ${collection.limit.toLocaleString()} ${collection.label} films · original art where available` : 'Live movie data · powered by TMDB'
+    : collection ? `${collection.limit.toLocaleString()} ${collection.label} titles available with TMDB · connect in settings` : `${DEMO_MOVIES.length} real films · original poster art · sample ratings · connect TMDB for live data.`;
   $('#tmdb-credit').hidden = !live;
 }
 
@@ -175,25 +185,60 @@ function apiSort() {
   if (app.sort === 'newest') return 'primary_release_date.desc';
   return 'popularity.desc';
 }
+function discoverFilters() {
+  const moodGenres = {
+    'feel-good': [35, 10751, 16, 10749],
+    'mind-bending': [878, 9648],
+    'edge-of-seat': [53, 80, 27, 28],
+    thoughtful: [18, 36, 99]
+  }[app.mood] || [];
+  const selectedGenre = app.genre === 'All' ? '' : Object.entries(TMDB_GENRES).find(([, name]) => name.toLowerCase() === app.genre.toLowerCase())?.[0] || '';
+  const genreGroups = [selectedGenre, moodGenres.length ? moodGenres.join('|') : ''].filter(Boolean);
+  const startYear = app.year === 'classics' ? '' : app.year === 'all' ? '' : Number(app.year.slice(0, 4));
+  const endYear = app.year === 'classics' ? 1989 : startYear ? startYear + 9 : '';
+  return {
+    with_origin_country: LIVE_COLLECTIONS[app.mode]?.origin || (app.mode === 'india' ? 'IN' : ''),
+    with_original_language: LIVE_COLLECTIONS[app.mode]?.language || '',
+    with_genres: genreGroups.join(','),
+    'primary_release_date.gte': startYear ? `${startYear}-01-01` : '',
+    'primary_release_date.lte': endYear ? `${endYear}-12-31` : '',
+    'vote_average.gte': app.minRating || ''
+  };
+}
 async function refreshCatalog({ append = false } = {}) {
   const token = localStorage.getItem(STORE_KEYS.token);
-  if (!token) { app.source = 'demo'; app.movies = [...DEMO_MOVIES]; app.totalPages = 1; render(); return; }
+  if (!token) {
+    app.source = 'demo'; app.movies = [...DEMO_MOVIES]; app.totalPages = 1; app.totalResults = DEMO_MOVIES.length;
+    render();
+    const collection = LIVE_COLLECTIONS[app.mode];
+    if (collection) showToast(`Connect TMDB in settings to browse up to ${collection.limit.toLocaleString()} ${collection.label} films.`);
+    return;
+  }
   const nextPage = append ? app.page + 1 : 1;
   $('#grid-summary').textContent = 'Finding films…';
   try {
     const result = app.query.trim()
       ? await tmdb('/search/movie', { query: app.query.trim(), include_adult: false, language: 'en-US', page: nextPage })
-      : await tmdb('/discover/movie', { include_adult: false, include_video: false, language: 'en-US', page: nextPage, sort_by: apiSort(), with_origin_country: app.mode === 'india' ? 'IN' : '', with_genres: app.genre === 'All' ? '' : Object.entries(TMDB_GENRES).find(([, name]) => name.toLowerCase() === app.genre.toLowerCase())?.[0] || '' });
+      : await tmdb('/discover/movie', {
+        include_adult: false,
+        include_video: false,
+        language: 'en-US',
+        page: nextPage,
+        sort_by: apiSort(),
+        ...discoverFilters()
+      });
     const incoming = (result.results || []).map(fromTMDB);
     incoming.forEach(movie => movieCache.set(movieId(movie), movie));
     app.movies = append ? [...app.movies, ...incoming] : incoming;
     app.page = nextPage;
-    app.totalPages = result.total_pages || 1;
+    app.totalResults = result.total_results || 0;
+    const collection = !app.query ? LIVE_COLLECTIONS[app.mode] : null;
+    app.totalPages = Math.min(result.total_pages || 1, collection ? Math.ceil(collection.limit / 20) : Number.MAX_SAFE_INTEGER);
     app.source = 'tmdb';
-    $('#load-more').hidden = !result.total_pages || result.page >= result.total_pages;
+    $('#load-more').hidden = !result.total_pages || result.page >= app.totalPages || !incoming.length;
     setSourceLabel(); renderMovies();
   } catch (error) {
-    app.source = 'demo'; app.movies = [...DEMO_MOVIES]; app.totalPages = 1;
+    app.source = 'demo'; app.movies = [...DEMO_MOVIES]; app.totalPages = 1; app.totalResults = DEMO_MOVIES.length;
     setSourceLabel(); renderMovies();
     showToast(`TMDB connection failed: ${error.message}`);
     $('#settings-status').textContent = 'Could not connect. Check the token and try again.';
@@ -231,6 +276,9 @@ function currentMovies() {
   let list = [...app.movies];
   if (app.showingWatchlist) list = app.watchlist.map(id => movieCache.get(id) || DEMO_MOVIES.find(movie => movieId(movie) === id)).filter(Boolean);
   if (app.mode === 'india' && !app.showingWatchlist) list = list.filter(movie => movie.country === 'India' || movie.origin_country?.includes('IN'));
+  if (!app.showingWatchlist && app.source !== 'tmdb' && app.mode === 'hollywood') list = list.filter(movie => movie.country === 'United States');
+  if (!app.showingWatchlist && app.source !== 'tmdb' && app.mode === 'bollywood') list = list.filter(movie => movie.country === 'India' && /hindi/i.test(movie.language || ''));
+  if (!app.showingWatchlist && app.source !== 'tmdb' && app.mode === 'tollywood') list = list.filter(movie => movie.country === 'India' && /telugu/i.test(movie.language || ''));
   if (app.query && app.source !== 'tmdb') {
     const query = app.query.toLowerCase();
     list = list.filter(movie => [movie.title, movie.director, movie.overview, ...(movie.cast || []).map(person => person[0]), ...movieGenres(movie)].join(' ').toLowerCase().includes(query));
@@ -273,8 +321,9 @@ function currentMovies() {
 }
 function cardMarkup(movie) {
   const isSaved = saved(movie), genres = movieGenres(movie);
+  const collectionTag = LIVE_COLLECTIONS[app.mode]?.label.toUpperCase() || (movie.country === 'India' ? 'INDIAN CINEMA' : escapeHTML(genres[0] || 'FILM'));
   return `<article class="movie-card" data-id="${escapeHTML(movieId(movie))}" tabindex="0" aria-label="View details for ${escapeHTML(movie.title)}">
-    <div class="poster-wrap"><img loading="lazy" src="${posterArtwork(movie)}" alt="${escapeHTML(movie.title)} poster artwork" /><div class="poster-overlay"></div><span class="poster-score"><b>${rating(movie).toFixed(1)}</b></span><button type="button" class="save-card ${isSaved ? 'is-saved' : ''}" data-save="${escapeHTML(movieId(movie))}" aria-label="${isSaved ? 'Remove' : 'Add'} ${escapeHTML(movie.title)} ${isSaved ? 'from' : 'to'} watchlist">${isSaved ? '✓' : '＋'}</button><span class="poster-tag">${movie.country === 'India' ? 'INDIAN CINEMA' : escapeHTML(genres[0] || 'FILM')} · FRAME EDIT</span></div>
+    <div class="poster-wrap"><img loading="lazy" src="${posterArtwork(movie)}" alt="${escapeHTML(movie.title)} poster artwork" /><div class="poster-overlay"></div><span class="poster-score"><b>${rating(movie).toFixed(1)}</b></span><button type="button" class="save-card ${isSaved ? 'is-saved' : ''}" data-save="${escapeHTML(movieId(movie))}" aria-label="${isSaved ? 'Remove' : 'Add'} ${escapeHTML(movie.title)} ${isSaved ? 'from' : 'to'} watchlist">${isSaved ? '✓' : '＋'}</button><span class="poster-tag">${collectionTag} · FRAME EDIT</span></div>
     <div class="card-info"><div class="card-title-line"><span class="card-title">${escapeHTML(movie.title)}</span><span class="card-year">${escapeHTML(movieYear(movie))}</span></div><p class="card-meta"><span>${escapeHTML(genres.slice(0, 2).join(' / ') || 'Feature film')}</span><span>·</span><span>${movie.runtime ? `${movie.runtime} MIN` : 'FILM'}</span></p></div>
   </article>`;
 }
@@ -286,10 +335,25 @@ function renderMovies() {
   grid.innerHTML = list.map(cardMarkup).join('');
   empty.hidden = list.length > 0;
   grid.hidden = list.length === 0;
-  $('#grid-summary').textContent = app.showingWatchlist ? `${allMovies.length} saved ${allMovies.length === 1 ? 'film' : 'films'}` : app.query ? `${allMovies.length} ${app.source === 'tmdb' ? 'live results' : 'curated films'} for “${app.query}”` : app.source === 'tmdb' ? `${allMovies.length} live movie results` : app.mode === 'recommended' && app.watchlist.length ? `Picked around your ${app.watchlist.length === 1 ? 'saved film' : 'watchlist'} · showing ${list.length} of ${allMovies.length}` : `Showing ${list.length} of ${allMovies.length} curated films`;
+  const liveCollection = !app.query && LIVE_COLLECTIONS[app.mode];
+  const liveCount = liveCollection ? Math.min(app.totalResults, liveCollection.limit) : app.totalResults;
+  $('#grid-summary').textContent = app.showingWatchlist
+    ? `${allMovies.length} saved ${allMovies.length === 1 ? 'film' : 'films'}`
+    : app.query
+      ? `${allMovies.length} ${app.source === 'tmdb' ? 'live results' : 'curated films'} for “${app.query}”`
+      : app.source === 'tmdb' && liveCollection
+        ? `${allMovies.length.toLocaleString()} loaded · ${liveCount.toLocaleString()} available · ${liveCollection.limit.toLocaleString()} title cap`
+        : app.source === 'tmdb'
+          ? `${allMovies.length.toLocaleString()} live movie results`
+          : liveCollection
+            ? `Connect TMDB to browse up to ${liveCollection.limit.toLocaleString()} ${liveCollection.label} films`
+            : app.mode === 'recommended' && app.watchlist.length
+              ? `Picked around your ${app.watchlist.length === 1 ? 'saved film' : 'watchlist'} · showing ${list.length} of ${allMovies.length}`
+              : `Showing ${list.length} of ${allMovies.length} curated films`;
   const moodTitles = { 'feel-good': 'A little joy', 'mind-bending': 'Mind-bending films', 'edge-of-seat': 'Edge-of-your-seat stories', thoughtful: 'Thoughtful films' };
-  $('#browse-title').innerHTML = app.showingWatchlist ? 'Your watchlist<span class="title-period">.</span>' : app.query ? 'Search results<span class="title-period">.</span>' : app.mood !== 'all' ? `${escapeHTML(moodTitles[app.mood] || 'Films for this mood')}<span class="title-period">.</span>` : app.mode === 'india' ? 'Indian cinema<span class="title-period">.</span>' : app.mode === 'popular' ? 'Popular right now<span class="title-period">.</span>' : app.mode === 'top' ? 'The highest rated<span class="title-period">.</span>' : app.mode === 'recommended' && app.watchlist.length ? 'Picked for you<span class="title-period">.</span>' : 'Films worth your time<span class="title-period">.</span>';
-  $('#results-kicker').textContent = app.showingWatchlist ? 'SAVED FOR LATER' : app.query ? 'YOUR SEARCH' : app.mood !== 'all' ? 'PICK YOUR MOOD' : app.mode === 'india' ? 'INDIAN CINEMA' : app.mode === 'recommended' && app.watchlist.length ? 'YOUR PERSONAL EDIT' : 'THE EDIT';
+  const collectionTitle = LIVE_COLLECTIONS[app.mode]?.label || ({ india: 'Indian cinema', popular: 'Popular right now', top: 'The highest rated' })[app.mode];
+  $('#browse-title').innerHTML = app.showingWatchlist ? 'Your watchlist<span class="title-period">.</span>' : app.query ? 'Search results<span class="title-period">.</span>' : app.mood !== 'all' ? `${escapeHTML(moodTitles[app.mood] || 'Films for this mood')}<span class="title-period">.</span>` : collectionTitle ? `${escapeHTML(collectionTitle)}<span class="title-period">.</span>` : app.mode === 'recommended' && app.watchlist.length ? 'Picked for you<span class="title-period">.</span>' : 'Films worth your time<span class="title-period">.</span>';
+  $('#results-kicker').textContent = app.showingWatchlist ? 'SAVED FOR LATER' : app.query ? 'YOUR SEARCH' : app.mood !== 'all' ? 'PICK YOUR MOOD' : LIVE_COLLECTIONS[app.mode] ? LIVE_COLLECTIONS[app.mode].label.toUpperCase() : app.mode === 'india' ? 'INDIAN CINEMA' : app.mode === 'recommended' && app.watchlist.length ? 'YOUR PERSONAL EDIT' : 'THE EDIT';
   const pages = app.source === 'tmdb' ? Math.max(1, app.totalPages) : Math.max(1, Math.ceil(allMovies.length / 8));
   const shownPage = app.source === 'tmdb' ? Math.max(1, Math.ceil(app.page)) : Math.min(pages, Math.max(1, Math.ceil(list.length / 8)));
   $('#grid-page').innerHTML = `${String(shownPage).padStart(2, '0')} <i></i> ${String(pages).padStart(2, '0')}`;
@@ -354,10 +418,14 @@ function bindRecommendations(movie) {
 }
 function closeModal(modal) { modal.hidden = true; document.body.style.overflow = ''; app.lastFocus?.focus?.(); }
 function activateMode(mode) {
-  app.showingWatchlist = false; app.mode = mode; app.page = 1; app.displayLimit = 8;
+  app.showingWatchlist = false; app.mode = mode; app.query = ''; $('#search-input').value = ''; app.page = 1; app.displayLimit = 8;
   $$('.mode-tab').forEach(tab => { const active = tab.dataset.mode === mode; tab.classList.toggle('is-active', active); tab.setAttribute('aria-selected', String(active)); });
   $('#watchlist-nav').classList.remove('is-current'); $('#discover-nav').classList.add('is-current');
-  if (app.source === 'tmdb' && !app.query) refreshCatalog(); else renderMovies();
+  if (app.source === 'tmdb') refreshCatalog(); else {
+    setSourceLabel(); renderMovies();
+    const collection = LIVE_COLLECTIONS[mode];
+    if (collection) showToast(`Connect TMDB in settings to browse up to ${collection.limit.toLocaleString()} ${collection.label} films.`);
+  }
 }
 function showWatchlist() {
   app.showingWatchlist = true;
@@ -383,9 +451,9 @@ $('#sort-select').addEventListener('change', event => { app.sort = event.target.
 $('#clear-filters').addEventListener('click', () => { app.query = ''; app.genre = 'All'; app.mood = 'all'; app.year = 'all'; app.minRating = 0; app.displayLimit = 8; app.page = 1; app.showingWatchlist = false; $('#search-input').value = ''; $('#year-filter').value = 'all'; $('#rating-filter').value = '0'; $$('.mood-chip').forEach(button => { const active = button.dataset.mood === 'all'; button.classList.toggle('is-active', active); button.setAttribute('aria-pressed', String(active)); }); if (app.source === 'tmdb') refreshCatalog(); else renderMovies(); });
 $('#load-more').addEventListener('click', () => { if (app.source === 'tmdb' && !app.showingWatchlist) refreshCatalog({ append: true }); else { app.displayLimit += 8; renderMovies(); } });
 $('#random-pick').addEventListener('click', () => { const candidates = currentMovies(); if (!candidates.length) { showToast('No films match these filters yet.'); return; } openDetails(candidates[Math.floor(Math.random() * candidates.length)]); });
-$('#mood-filters').addEventListener('click', event => { const button = event.target.closest('[data-mood]'); if (!button) return; app.mood = button.dataset.mood; app.displayLimit = 8; $$('.mood-chip').forEach(chip => { const active = chip === button; chip.classList.toggle('is-active', active); chip.setAttribute('aria-pressed', String(active)); }); renderMovies(); });
-$('#year-filter').addEventListener('change', event => { app.year = event.target.value; app.displayLimit = 8; renderMovies(); });
-$('#rating-filter').addEventListener('change', event => { app.minRating = Number(event.target.value); app.displayLimit = 8; renderMovies(); });
+$('#mood-filters').addEventListener('click', event => { const button = event.target.closest('[data-mood]'); if (!button) return; app.mood = button.dataset.mood; app.page = 1; app.displayLimit = 8; $$('.mood-chip').forEach(chip => { const active = chip === button; chip.classList.toggle('is-active', active); chip.setAttribute('aria-pressed', String(active)); }); if (app.source === 'tmdb' && !app.query) refreshCatalog(); else renderMovies(); });
+$('#year-filter').addEventListener('change', event => { app.year = event.target.value; app.page = 1; app.displayLimit = 8; if (app.source === 'tmdb' && !app.query) refreshCatalog(); else renderMovies(); });
+$('#rating-filter').addEventListener('change', event => { app.minRating = Number(event.target.value); app.page = 1; app.displayLimit = 8; if (app.source === 'tmdb' && !app.query) refreshCatalog(); else renderMovies(); });
 
 const settingsModal = $('#settings-modal');
 function openSettings() { app.lastFocus = document.activeElement; $('#api-token').value = localStorage.getItem(STORE_KEYS.token) || ''; $('#settings-status').textContent = ''; settingsModal.hidden = false; document.body.style.overflow = 'hidden'; $('.modal-close', settingsModal).focus(); }
