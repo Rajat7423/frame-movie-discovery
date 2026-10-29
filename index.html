@@ -92,6 +92,9 @@
               <button type="button" class="mode-tab" role="tab" aria-selected="false" data-mode="popular">Popular</button>
               <button type="button" class="mode-tab" role="tab" aria-selected="false" data-mode="top">Top rated</button>
               <button type="button" class="mode-tab" role="tab" aria-selected="false" data-mode="india">Indian cinema</button>
+              <button type="button" class="mode-tab" role="tab" aria-selected="false" data-mode="hollywood">Hollywood · 4,000</button>
+              <button type="button" class="mode-tab" role="tab" aria-selected="false" data-mode="bollywood">Bollywood · 2,000</button>
+              <button type="button" class="mode-tab" role="tab" aria-selected="false" data-mode="tollywood">Tollywood · 1,000</button>
             </div>
             <div class="genre-filters" id="genre-filters" aria-label="Filter by genre"></div>
           </div>
@@ -167,8 +170,8 @@
         <button type="button" class="modal-close" data-close aria-label="Close settings">×</button>
         <p class="eyebrow eyebrow-small">MAKE IT YOURS</p>
         <h2 id="settings-title">Choose your<br /><em>movie source.</em></h2>
-        <p class="settings-description">Use the FRAME collection on its own, or connect a TMDB read access token to search their live movie catalog and open full film details.</p>
-        <label class="token-label" for="api-token">TMDB API Read Access Token <span>optional</span></label>
+        <p class="settings-description">Connect TMDB to browse up to 4,000 Hollywood, 2,000 Bollywood, and 1,000 Telugu cinema films, with original posters and backdrops where available.</p>
+        <label class="token-label" for="api-token">TMDB API Read Access Token <span>for live movies</span></label>
         <div class="token-input-row"><input id="api-token" type="password" placeholder="Paste your read access token" autocomplete="off" /><button type="button" id="token-visibility" aria-label="Show token">Show</button></div>
         <p class="token-help">Your token is saved only in this browser. <a href="https://developer.themoviedb.org/docs/authentication-application" target="_blank" rel="noreferrer">Where to find it ↗</a></p>
         <div class="settings-actions"><button class="button button-dark" type="button" id="save-token">Save &amp; connect <span aria-hidden="true">↗</span></button><button class="text-button" type="button" id="remove-token">Use demo collection</button></div>
